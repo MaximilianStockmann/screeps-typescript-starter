@@ -36,7 +36,14 @@ export const loop = ErrorMapper.wrapLoop(() => {
   console.log(`Current game tick is ${Game.time}`);
   const spawn1 = Game.spawns['Spawn1'];
 
-  creepManager.spawnHarvester(spawn1);
+  if (creepManager.AllHarvesterCreepNames.length < 3) {
+    creepManager.spawnHarvester(spawn1);
+  } else if (Object.keys(Game.creeps).length < 5) {
+    creepManager.spawnUpgrader(spawn1);
+  } else if (Object.keys(Game.creeps).length >= 5) {
+    creepManager.spawnBuilder(spawn1);
+  }
+
   creepManager.run();
 
   // Automatically delete memory of missing creeps

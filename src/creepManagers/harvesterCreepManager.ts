@@ -3,7 +3,6 @@ import { ROLE, carryToSpawn, checkIfFull } from "./creepManager";
 /**
  * @description Manages spawning and commanding harvester creeps
  */
-
 export class HarvesterCreepManager {
     private harvesterCreepAmount: number;
 
@@ -30,8 +29,8 @@ export class HarvesterCreepManager {
      */
     private harvest(creep: HarvesterCreep) {
         let isFull = checkIfFull(creep);
-        const assignedResource = Game.getObjectById(creep.memory.assignedResource.id) as Source;
-        const assignedSpawn = Game.getObjectById(creep.memory.assignedSpawn.id) as StructureSpawn;
+        const assignedResource = Game.getObjectById(creep.memory.assignedResourceId) as Source;
+        const assignedSpawn = Game.getObjectById(creep.memory.assignedSpawnId) as StructureSpawn;
 
         if (!isFull && creep.harvest(assignedResource) == ERR_NOT_IN_RANGE) {
             creep.moveTo(assignedResource);
@@ -45,7 +44,7 @@ export class HarvesterCreepManager {
     }
 
     public spawnHarvester(spawn: StructureSpawn, assignedResource: Source | Mineral | Deposit) {
-        spawn.spawnCreep([WORK, CARRY, MOVE, MOVE], 'Harvester' + this.harvesterCreepAmount, { memory: new HarvesterCreepMemory(spawn.room.name, assignedResource, spawn) })
+        spawn.spawnCreep([WORK, CARRY, MOVE, MOVE], 'Harvester' + Game.time, { memory: new HarvesterCreepMemory(spawn.room, assignedResource, spawn) });
     }
 }
 
@@ -55,16 +54,16 @@ interface HarvesterCreep extends Creep {
 
 class HarvesterCreepMemory implements CreepMemory {
     role: string;
-    room: string;
+    roomName: string;
     working: boolean;
-    assignedResource: Source | Mineral | Deposit;
-    assignedSpawn: StructureSpawn;
+    assignedResourceId: Id<Source | Mineral | Deposit>;
+    assignedSpawnId: Id<StructureSpawn>;
 
-    constructor(room: string, assignedResource: Source | Mineral | Deposit, assignedSpawn: StructureSpawn) {
+    constructor(room: Room, assignedResource: Source | Mineral | Deposit, assignedSpawn: StructureSpawn) {
         this.role = ROLE.HARVESTER;
-        this.room = room;
+        this.roomName = room.name;
         this.working = true;
-        this.assignedResource = assignedResource;
-        this.assignedSpawn = assignedSpawn;
+        this.assignedResourceId = assignedResource.id;
+        this.assignedSpawnId = assignedSpawn.id;
     }
 }

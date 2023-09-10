@@ -1,3 +1,4 @@
+import { BuilderCreepManager } from "./builderCreepManager";
 import { HarvesterCreepManager } from "./harvesterCreepManager";
 import { UpgraderCreepManager } from "./upgraderCreepManager";
 
@@ -5,10 +6,12 @@ class CreepManager {
     private static _instance: CreepManager;
     private _harvesterCreepManager: HarvesterCreepManager;
     private _upgraderCreepManager: UpgraderCreepManager;
+    private _builderCreepManager: BuilderCreepManager;
 
     private constructor() {
         this._harvesterCreepManager = new HarvesterCreepManager();
         this._upgraderCreepManager = new UpgraderCreepManager();
+        this._builderCreepManager = new BuilderCreepManager();
     }
 
     public static get Instance() {
@@ -23,17 +26,33 @@ class CreepManager {
         this._upgraderCreepManager.spawnUpgrader(spawn, spawn.room.controller as StructureController)
     }
 
+    public spawnBuilder(spawn: StructureSpawn) {
+        this._builderCreepManager.spawnBuilder(spawn);
+    }
+
     public get AllHarvesterCreepNames() {
         return this._harvesterCreepManager.AllHarvesterCreepNames;
     }
 
+    public get AllBuilderCreepNames() {
+        return this._builderCreepManager.AllBuilderCreepNames;
+    }
+
+    public get AllUpgraderCreepNames() {
+        return this._upgraderCreepManager.AllUpgraderCreepNames;
+    }
+
     public run() {
         this._harvesterCreepManager.executeBasicRoutine();
+        this._upgraderCreepManager.executeBasicRoutine();
+        this._builderCreepManager.executeBasicRoutine();
     }
 }
 
 export enum ROLE {
-    HARVESTER = 'harvester'
+    HARVESTER = 'harvester',
+    BUILDER = 'builder',
+    UPGRADER = 'upgrader'
 }
 
 /*************************************/

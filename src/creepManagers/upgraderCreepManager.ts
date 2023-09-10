@@ -16,15 +16,14 @@ export class UpgraderCreepManager implements CreepRoleManager {
     }
 
     upgrade(creep: UpgraderCreep): void {
-        const roomController = Game.getObjectById(creep.memory.assignedRC.id) as StructureController;
-        const assignedSpawn = Game.getObjectById(creep.memory.assignedSpawn.id) as StructureSpawn;
+        const roomController = Game.getObjectById(creep.memory.assignedRCId) as StructureController;
+        const assignedSpawn = Game.getObjectById(creep.memory.assignedSpawnId) as StructureSpawn;
         const creepStore = creep.store;
 
-        if (creep.upgradeController(roomController) === ERR_NOT_IN_RANGE && creepStore.getFreeCapacity() === 0) {
+        if (creep.upgradeController(roomController) === ERR_NOT_IN_RANGE && creepStore.getUsedCapacity(RESOURCE_ENERGY) > 0) {
             creep.moveTo(roomController);
         // This doesn't work
-        } else if (creepStore.getFreeCapacity() === 0 && assignedSpawn.store.getCapacity(RESOURCE_ENERGY) > 0) {
-
+        } else if (creepStore.getUsedCapacity(RESOURCE_ENERGY) === 0 && assignedSpawn.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
             if (creep.withdraw(assignedSpawn, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                 creep.moveTo(assignedSpawn);
             } else {
@@ -34,7 +33,7 @@ export class UpgraderCreepManager implements CreepRoleManager {
     }
 
     public spawnUpgrader(spawn: StructureSpawn, assignedRC: StructureController) {
-        spawn.spawnCreep([WORK, CARRY, MOVE, MOVE], 'Harvester' + this.upgraderCreepAmount, { memory: new UpgraderCreepMemory(spawn.room.name, assignedRC, spawn) })
+        spawn.spawnCreep([WORK, CARRY, MOVE, MOVE], 'Upgrader' + Game.time, { memory: new UpgraderCreepMemory(spawn.room.name, assignedRC, spawn) })
     }
 
     public get AllUpgraderCreepNames() {
@@ -50,15 +49,15 @@ class UpgraderCreepMemory implements CreepMemory {
     role: string;
     room: string;
     working: boolean;
-    assignedRC: StructureController;
-    assignedSpawn: StructureSpawn;
+    assignedRCId: Id<StructureController>;
+    assignedSpawnId: Id<StructureSpawn>;
 
     constructor(room: string, assignedController: StructureController, assignedSpawn: StructureSpawn) {
-        this.role = ROLE.HARVESTER;
+        this.role = ROLE.UPGRADER;
         this.room = room;
         this.working = true;
-        this.assignedRC = assignedController;
-        this.assignedSpawn = assignedSpawn;
+        this.assignedRCId = assignedController.id;
+        this.assignedSpawnId = assignedSpawn.id;
     }
 }
 
