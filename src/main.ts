@@ -38,9 +38,9 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
   if (creepManager.AllHarvesterCreepNames.length < 3) {
     creepManager.spawnHarvester(spawn1);
-  } else if (Object.keys(Game.creeps).length < 5) {
+  } else if (Object.keys(Game.creeps).length < 4) {
     creepManager.spawnUpgrader(spawn1);
-  } else if (Object.keys(Game.creeps).length >= 5) {
+  } else if (Object.keys(Game.creeps).length = 4) {
     creepManager.spawnBuilder(spawn1);
   }
 
