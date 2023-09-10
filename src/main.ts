@@ -1,4 +1,4 @@
-import { creepManager } from "creepManager";
+import { creepManager } from "creepManagers/creepManager";
 import { ErrorMapper } from "utils/ErrorMapper";
 
 declare global {
@@ -17,9 +17,9 @@ declare global {
   }
 
   interface CreepMemory {
-    role: string;
-    room: string;
-    working: boolean;
+    role?: string;
+    room?: string;
+    working?: boolean;
   }
 
   // Syntax for adding proprties to `global` (ex "global.log")
@@ -37,6 +37,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
   const spawn1 = Game.spawns['Spawn1'];
 
   creepManager.spawnHarvester(spawn1);
+  creepManager.run();
 
   // Automatically delete memory of missing creeps
   for (const name in Memory.creeps) {
